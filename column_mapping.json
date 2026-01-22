@@ -1,0 +1,612 @@
+{
+  "0": {
+    "nom": "N°",
+    "index": 0,
+    "type": "identite"
+  },
+  "1": {
+    "nom": "Unnamed: 1",
+    "index": 1,
+    "type": "note"
+  },
+  "2": {
+    "nom": "MATRICULE",
+    "index": 2,
+    "type": "identite"
+  },
+  "3": {
+    "nom": "NOMS & PRENOMS",
+    "index": 3,
+    "type": "identite"
+  },
+  "4": {
+    "nom": " ",
+    "index": 4,
+    "type": "note"
+  },
+  "5": {
+    "nom": "CC",
+    "index": 5,
+    "type": "note"
+  },
+  "6": {
+    "nom": "EX",
+    "index": 6,
+    "type": "note"
+  },
+  "7": {
+    "nom": "MOY",
+    "index": 7,
+    "type": "note"
+  },
+  "8": {
+    "nom": "Unnamed: 8",
+    "index": 8,
+    "type": "note"
+  },
+  "9": {
+    "nom": "CA",
+    "index": 9,
+    "type": "note"
+  },
+  "10": {
+    "nom": "Unnamed: 10",
+    "index": 10,
+    "type": "note"
+  },
+  "11": {
+    "nom": "DECISION",
+    "index": 11,
+    "type": "note"
+  },
+  "12": {
+    "nom": " .1",
+    "index": 12,
+    "type": "note"
+  },
+  "13": {
+    "nom": "CC.1",
+    "index": 13,
+    "type": "note"
+  },
+  "14": {
+    "nom": "EX.1",
+    "index": 14,
+    "type": "note"
+  },
+  "15": {
+    "nom": "MOY.1",
+    "index": 15,
+    "type": "note"
+  },
+  "16": {
+    "nom": "Unnamed: 16",
+    "index": 16,
+    "type": "note"
+  },
+  "17": {
+    "nom": "CA.1",
+    "index": 17,
+    "type": "note"
+  },
+  "18": {
+    "nom": "Unnamed: 18",
+    "index": 18,
+    "type": "note"
+  },
+  "19": {
+    "nom": "DECISION.1",
+    "index": 19,
+    "type": "note"
+  },
+  "20": {
+    "nom": "MOY.2",
+    "index": 20,
+    "type": "note"
+  },
+  "21": {
+    "nom": "Unnamed: 21",
+    "index": 21,
+    "type": "note"
+  },
+  "22": {
+    "nom": "CA.2",
+    "index": 22,
+    "type": "note"
+  },
+  "23": {
+    "nom": "Unnamed: 23",
+    "index": 23,
+    "type": "note"
+  },
+  "24": {
+    "nom": "DECISION.2",
+    "index": 24,
+    "type": "note"
+  },
+  "25": {
+    "nom": " .2",
+    "index": 25,
+    "type": "note"
+  },
+  "26": {
+    "nom": "CC.2",
+    "index": 26,
+    "type": "note"
+  },
+  "27": {
+    "nom": "EX.2",
+    "index": 27,
+    "type": "note"
+  },
+  "28": {
+    "nom": "MOY.3",
+    "index": 28,
+    "type": "note"
+  },
+  "29": {
+    "nom": "Unnamed: 29",
+    "index": 29,
+    "type": "note"
+  },
+  "30": {
+    "nom": "CA.3",
+    "index": 30,
+    "type": "note"
+  },
+  "31": {
+    "nom": "Unnamed: 31",
+    "index": 31,
+    "type": "note"
+  },
+  "32": {
+    "nom": "DECISION.3",
+    "index": 32,
+    "type": "note"
+  },
+  "33": {
+    "nom": " .3",
+    "index": 33,
+    "type": "note"
+  },
+  "34": {
+    "nom": "CC.3",
+    "index": 34,
+    "type": "note"
+  },
+  "35": {
+    "nom": "EX.3",
+    "index": 35,
+    "type": "note"
+  },
+  "36": {
+    "nom": "MOY.4",
+    "index": 36,
+    "type": "note"
+  },
+  "37": {
+    "nom": "Unnamed: 37",
+    "index": 37,
+    "type": "note"
+  },
+  "38": {
+    "nom": "CA.4",
+    "index": 38,
+    "type": "note"
+  },
+  "39": {
+    "nom": "Unnamed: 39",
+    "index": 39,
+    "type": "note"
+  },
+  "40": {
+    "nom": "DECISION.4",
+    "index": 40,
+    "type": "note"
+  },
+  "41": {
+    "nom": "MOY.5",
+    "index": 41,
+    "type": "note"
+  },
+  "42": {
+    "nom": "Unnamed: 42",
+    "index": 42,
+    "type": "note"
+  },
+  "43": {
+    "nom": "CA.5",
+    "index": 43,
+    "type": "note"
+  },
+  "44": {
+    "nom": "Unnamed: 44",
+    "index": 44,
+    "type": "note"
+  },
+  "45": {
+    "nom": "DECISION.5",
+    "index": 45,
+    "type": "note"
+  },
+  "46": {
+    "nom": " .4",
+    "index": 46,
+    "type": "note"
+  },
+  "47": {
+    "nom": "CC.4",
+    "index": 47,
+    "type": "note"
+  },
+  "48": {
+    "nom": "EX.4",
+    "index": 48,
+    "type": "note"
+  },
+  "49": {
+    "nom": "MOY.6",
+    "index": 49,
+    "type": "note"
+  },
+  "50": {
+    "nom": "Unnamed: 50",
+    "index": 50,
+    "type": "note"
+  },
+  "51": {
+    "nom": "CA.6",
+    "index": 51,
+    "type": "note"
+  },
+  "52": {
+    "nom": "Unnamed: 52",
+    "index": 52,
+    "type": "note"
+  },
+  "53": {
+    "nom": "DECISION.6",
+    "index": 53,
+    "type": "note"
+  },
+  "54": {
+    "nom": " .5",
+    "index": 54,
+    "type": "note"
+  },
+  "55": {
+    "nom": "CC.5",
+    "index": 55,
+    "type": "note"
+  },
+  "56": {
+    "nom": "EX.5",
+    "index": 56,
+    "type": "note"
+  },
+  "57": {
+    "nom": "MOY.7",
+    "index": 57,
+    "type": "note"
+  },
+  "58": {
+    "nom": "Unnamed: 58",
+    "index": 58,
+    "type": "note"
+  },
+  "59": {
+    "nom": "CA.7",
+    "index": 59,
+    "type": "note"
+  },
+  "60": {
+    "nom": "Unnamed: 60",
+    "index": 60,
+    "type": "note"
+  },
+  "61": {
+    "nom": "DECISION.7",
+    "index": 61,
+    "type": "note"
+  },
+  "62": {
+    "nom": " .6",
+    "index": 62,
+    "type": "note"
+  },
+  "63": {
+    "nom": "CC.6",
+    "index": 63,
+    "type": "note"
+  },
+  "64": {
+    "nom": "EX.6",
+    "index": 64,
+    "type": "note"
+  },
+  "65": {
+    "nom": "MOY.8",
+    "index": 65,
+    "type": "note"
+  },
+  "66": {
+    "nom": "Unnamed: 66",
+    "index": 66,
+    "type": "note"
+  },
+  "67": {
+    "nom": "CA.8",
+    "index": 67,
+    "type": "note"
+  },
+  "68": {
+    "nom": "Unnamed: 68",
+    "index": 68,
+    "type": "note"
+  },
+  "69": {
+    "nom": "DECISION.8",
+    "index": 69,
+    "type": "note"
+  },
+  "70": {
+    "nom": "MOY.9",
+    "index": 70,
+    "type": "note"
+  },
+  "71": {
+    "nom": "Unnamed: 71",
+    "index": 71,
+    "type": "note"
+  },
+  "72": {
+    "nom": "CA.9",
+    "index": 72,
+    "type": "note"
+  },
+  "73": {
+    "nom": "Unnamed: 73",
+    "index": 73,
+    "type": "note"
+  },
+  "74": {
+    "nom": "DECISION.9",
+    "index": 74,
+    "type": "note"
+  },
+  "75": {
+    "nom": " .7",
+    "index": 75,
+    "type": "note"
+  },
+  "76": {
+    "nom": "CC.7",
+    "index": 76,
+    "type": "note"
+  },
+  "77": {
+    "nom": "EX.7",
+    "index": 77,
+    "type": "note"
+  },
+  "78": {
+    "nom": "MOY.10",
+    "index": 78,
+    "type": "note"
+  },
+  "79": {
+    "nom": "Unnamed: 79",
+    "index": 79,
+    "type": "note"
+  },
+  "80": {
+    "nom": "CA.10",
+    "index": 80,
+    "type": "note"
+  },
+  "81": {
+    "nom": "Unnamed: 81",
+    "index": 81,
+    "type": "note"
+  },
+  "82": {
+    "nom": "DECISION.10",
+    "index": 82,
+    "type": "note"
+  },
+  "83": {
+    "nom": " .8",
+    "index": 83,
+    "type": "note"
+  },
+  "84": {
+    "nom": "CC.8",
+    "index": 84,
+    "type": "note"
+  },
+  "85": {
+    "nom": "EX.8",
+    "index": 85,
+    "type": "note"
+  },
+  "86": {
+    "nom": "MOY.11",
+    "index": 86,
+    "type": "note"
+  },
+  "87": {
+    "nom": "Unnamed: 87",
+    "index": 87,
+    "type": "note"
+  },
+  "88": {
+    "nom": "CA.11",
+    "index": 88,
+    "type": "note"
+  },
+  "89": {
+    "nom": "Unnamed: 89",
+    "index": 89,
+    "type": "note"
+  },
+  "90": {
+    "nom": "DECISION.11",
+    "index": 90,
+    "type": "note"
+  },
+  "91": {
+    "nom": "MOY.12",
+    "index": 91,
+    "type": "note"
+  },
+  "92": {
+    "nom": "Unnamed: 92",
+    "index": 92,
+    "type": "note"
+  },
+  "93": {
+    "nom": "CA.12",
+    "index": 93,
+    "type": "note"
+  },
+  "94": {
+    "nom": "Unnamed: 94",
+    "index": 94,
+    "type": "note"
+  },
+  "95": {
+    "nom": "DECISION.12",
+    "index": 95,
+    "type": "note"
+  },
+  "96": {
+    "nom": " .9",
+    "index": 96,
+    "type": "note"
+  },
+  "97": {
+    "nom": "CC.9",
+    "index": 97,
+    "type": "note"
+  },
+  "98": {
+    "nom": "EX.9",
+    "index": 98,
+    "type": "note"
+  },
+  "99": {
+    "nom": "MOY.13",
+    "index": 99,
+    "type": "note"
+  },
+  "100": {
+    "nom": "Unnamed: 100",
+    "index": 100,
+    "type": "note"
+  },
+  "101": {
+    "nom": "CA.13",
+    "index": 101,
+    "type": "note"
+  },
+  "102": {
+    "nom": "Unnamed: 102",
+    "index": 102,
+    "type": "note"
+  },
+  "103": {
+    "nom": "DECISION.13",
+    "index": 103,
+    "type": "note"
+  },
+  "104": {
+    "nom": " .10",
+    "index": 104,
+    "type": "note"
+  },
+  "105": {
+    "nom": "CC.10",
+    "index": 105,
+    "type": "note"
+  },
+  "106": {
+    "nom": "EX.10",
+    "index": 106,
+    "type": "note"
+  },
+  "107": {
+    "nom": "MOY.14",
+    "index": 107,
+    "type": "note"
+  },
+  "108": {
+    "nom": "Unnamed: 108",
+    "index": 108,
+    "type": "note"
+  },
+  "109": {
+    "nom": "CA.14",
+    "index": 109,
+    "type": "note"
+  },
+  "110": {
+    "nom": "Unnamed: 110",
+    "index": 110,
+    "type": "note"
+  },
+  "111": {
+    "nom": "DECISION.14",
+    "index": 111,
+    "type": "note"
+  },
+  "112": {
+    "nom": "MOY.15",
+    "index": 112,
+    "type": "note"
+  },
+  "113": {
+    "nom": "Unnamed: 113",
+    "index": 113,
+    "type": "note"
+  },
+  "114": {
+    "nom": "CA.15",
+    "index": 114,
+    "type": "note"
+  },
+  "115": {
+    "nom": "Unnamed: 115",
+    "index": 115,
+    "type": "note"
+  },
+  "116": {
+    "nom": "DECISION.15",
+    "index": 116,
+    "type": "note"
+  },
+  "117": {
+    "nom": "MOYENNE/20",
+    "index": 117,
+    "type": "note"
+  },
+  "118": {
+    "nom": "Unnamed: 118",
+    "index": 118,
+    "type": "note"
+  },
+  "119": {
+    "nom": "CREDITS  ACQUIS",
+    "index": 119,
+    "type": "note"
+  },
+  "120": {
+    "nom": "Unnamed: 120",
+    "index": 120,
+    "type": "note"
+  },
+  "121": {
+    "nom": "DECISION.16",
+    "index": 121,
+    "type": "note"
+  }
+}

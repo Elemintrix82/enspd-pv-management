@@ -1,0 +1,25 @@
+# ENSPD PV Management - Requirements
+# Python 3.10+
+
+# Core Framework
+Django==5.2
+
+# Excel Processing
+pandas==2.3.2
+openpyxl==3.1.5
+
+# Database
+# For SQLite (default, included with Python)
+# For PostgreSQL (uncomment if needed):
+# psycopg2-binary==2.9.9
+
+# Additional utilities
+python-dateutil==2.9.0.post0
+pytz==2025.2
+
+# Development tools (optional)
+# django-browser-reload==1.18.0  # Auto-reload browser on code changes
+
+# Production Server (optional)
+# gunicorn==21.2.0
+# whitenoise==6.9.0

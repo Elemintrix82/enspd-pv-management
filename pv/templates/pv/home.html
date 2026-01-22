@@ -1,0 +1,188 @@
+{% extends 'pv/base.html' %}
+{% load static %}
+
+{% block title %}Accueil - Gestion des PV | ENSPD{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-gradient-to-br from-primary-600 to-primary-800 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center">
+            <div class="flex justify-center mb-6">
+                <div class="bg-white/10 backdrop-blur-sm p-4 rounded-2xl">
+                    <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-heading font-bold mb-4">
+                Gestion des Procès-Verbaux
+            </h1>
+            <p class="text-xl text-primary-100 max-w-2xl mx-auto">
+                École Nationale Supérieure Polytechnique de Douala
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Import Section -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+        <div class="p-8 md:p-12 text-center">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-primary-100 rounded-2xl mb-6">
+                <svg class="w-10 h-10 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+            </div>
+            <h2 class="text-3xl font-heading font-bold text-gray-900 mb-3">
+                Importer un nouveau PV
+            </h2>
+            <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                Importez un fichier Excel contenant les résultats de délibération pour commencer l'analyse
+            </p>
+            <a href="{% url 'pv:import' %}" class="inline-flex items-center space-x-2 px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <span>Importer un fichier PV</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Recent PVs Section -->
+{% if pvs %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+    <!-- Section Header -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h2 class="text-2xl font-heading font-bold text-gray-900 flex items-center space-x-3">
+                <svg class="w-7 h-7 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Historique des imports récents</span>
+            </h2>
+            <p class="text-sm text-gray-600 mt-1 ml-10">
+                Total: <span class="font-semibold text-primary-600">{{ total_pvs }}</span> PV(s) importé(s)
+            </p>
+        </div>
+    </div>
+
+    <!-- PV Cards Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {% for pv in pvs %}
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-200 border border-gray-200 overflow-hidden group">
+            <!-- Card Header -->
+            <div class="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4">
+                <h3 class="text-lg font-heading font-bold text-white flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>{{ pv.filiere }}</span>
+                </h3>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-6">
+                <!-- Metadata Grid -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Niveau</p>
+                        <p class="text-sm font-semibold text-gray-900">{{ pv.niveau }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Semestre</p>
+                        <p class="text-sm font-semibold text-gray-900">{{ pv.semestre }}</p>
+                    </div>
+                    <div class="col-span-2">
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Année académique</p>
+                        <p class="text-sm font-semibold text-gray-900">{{ pv.annee_academique }}</p>
+                    </div>
+                    <div class="col-span-2">
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Formation</p>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                            {{ pv.formation|default:"Non spécifié" }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="grid grid-cols-3 gap-4 py-4 border-t border-gray-200">
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-10 h-10 bg-primary-100 rounded-lg mb-2">
+                            <svg class="w-5 h-5 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                            </svg>
+                        </div>
+                        <p class="text-xl font-bold text-gray-900">{{ pv.nombre_etudiants }}</p>
+                        <p class="text-xs text-gray-600">Étudiants</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-10 h-10 bg-success-100 rounded-lg mb-2">
+                            <svg class="w-5 h-5 text-success-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <p class="text-xl font-bold text-success-600">{{ pv.nombre_valides }}</p>
+                        <p class="text-xs text-gray-600">Validés</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-10 h-10 bg-danger-100 rounded-lg mb-2">
+                            <svg class="w-5 h-5 text-danger-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <p class="text-xl font-bold text-danger-600">{{ pv.nombre_non_valides }}</p>
+                        <p class="text-xs text-gray-600">Échecs</p>
+                    </div>
+                </div>
+
+                <!-- Import Date -->
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <p class="text-xs text-gray-500 flex items-center space-x-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span>Importé le {{ pv.date_import|date:"d/m/Y à H:i" }}</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card Footer -->
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                <a href="{% url 'pv:dashboard' pv.pk %}" class="flex items-center justify-center space-x-2 w-full px-4 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors duration-200 group-hover:shadow-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    <span>Consulter le tableau</span>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<!-- Empty State -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+    <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-12 text-center">
+        <div class="inline-flex items-center justify-center w-24 h-24 bg-gray-100 rounded-full mb-6">
+            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+        </div>
+        <h3 class="text-2xl font-heading font-bold text-gray-900 mb-2">
+            Aucun PV importé pour le moment
+        </h3>
+        <p class="text-gray-600 mb-6">
+            Commencez par importer votre premier fichier PV
+        </p>
+        <a href="{% url 'pv:import' %}" class="inline-flex items-center space-x-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors duration-200">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <span>Importer maintenant</span>
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

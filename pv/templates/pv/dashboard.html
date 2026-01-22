@@ -1,0 +1,784 @@
+{% extends 'pv/base.html' %}
+{% load static %}
+{% load pv_tags %}
+
+{% block title %}Dashboard - {{ pv.filiere }} {{ pv.niveau }} {{ pv.semestre }} | ENSPD{% endblock %}
+
+{% block content %}
+<div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div class="lg:col-span-2">
+            <h2 class="text-2xl font-heading font-bold text-gray-900 flex items-center space-x-2 mb-4">
+                <svg class="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                <span>PROCÈS-VERBAL DE DÉLIBÉRATION</span>
+            </h2>
+            <div class="bg-gray-50 rounded-xl border border-gray-200 p-4">
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Filière</p>
+                        <p class="font-semibold text-primary-600">{{ pv.filiere }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Niveau</p>
+                        <p class="font-semibold text-gray-900">{{ pv.niveau }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Semestre</p>
+                        <p class="font-semibold text-gray-900">{{ pv.semestre }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Année Académique</p>
+                        <p class="font-semibold text-gray-900">{{ pv.annee_academique }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Formation</p>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {% if pv.formation == 'ALTERNANCE' %}bg-blue-100 text-blue-700{% else %}bg-gray-100 text-gray-700{% endif %}">
+                            {{ pv.formation|default:"Classique" }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex lg:flex-col gap-3 lg:justify-end">
+            <a href="{% url 'pv:export' pv.pk %}?{{ request.GET.urlencode }}" class="flex items-center justify-center space-x-2 px-4 py-3 bg-success-600 hover:bg-success-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-sm">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                <span class="hidden sm:inline">Exporter Excel</span>
+            </a>
+            <a href="{% url 'pv:export_emargement' pv.pk %}?{{ request.GET.urlencode }}" class="flex items-center justify-center space-x-2 px-4 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-sm" title="Exporter la feuille d'émargement avec filtres appliqués">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                <span class="hidden sm:inline">Émargement avec filtre</span>
+            </a>
+            <a href="{% url 'pv:export_emargements_nv' pv.pk %}" class="flex items-center justify-center space-x-2 px-4 py-3 bg-danger-600 hover:bg-danger-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-sm" title="Exporter les émargements NV complets par matière">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                <span class="hidden sm:inline">Émargements NV</span>
+            </a>
+            <a href="{% url 'pv:export_emargements_v_vc' pv.pk %}" class="flex items-center justify-center space-x-2 px-4 py-3 bg-success-600 hover:bg-success-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-sm" title="Exporter les émargements V et VC par matière">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="hidden sm:inline">Émargements V et VC</span>
+            </a>
+            <a href="{% url 'pv:print' pv.pk %}?{{ request.GET.urlencode }}" class="flex items-center justify-center space-x-2 px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-sm" target="_blank">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                <span class="hidden sm:inline">Imprimer</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 border-l-4 border-l-primary-600 overflow-hidden group hover:shadow-lg transition-shadow duration-200">
+            <div class="p-5">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center group-hover:bg-primary-200 transition-colors duration-200">
+                            <svg class="w-7 h-7 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-3xl font-bold text-gray-900">{{ total_etudiants }}</p>
+                        <p class="text-sm text-gray-600">Total Étudiants</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 border-l-4 border-l-success-600 overflow-hidden group hover:shadow-lg transition-shadow duration-200">
+            <div class="p-5">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-14 h-14 bg-success-100 rounded-xl flex items-center justify-center group-hover:bg-success-200 transition-colors duration-200">
+                            <svg class="w-7 h-7 text-success-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-3xl font-bold text-success-600">{{ pv.nombre_valides }}</p>
+                        <p class="text-sm text-gray-900">Validés</p>
+                        <p class="text-xs text-gray-500">{{ pv.taux_reussite|floatformat:1 }}% de réussite</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 border-l-4 border-l-danger-600 overflow-hidden group hover:shadow-lg transition-shadow duration-200">
+            <div class="p-5">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-14 h-14 bg-danger-100 rounded-xl flex items-center justify-center group-hover:bg-danger-200 transition-colors duration-200">
+                            <svg class="w-7 h-7 text-danger-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-3xl font-bold text-danger-600">{{ pv.nombre_non_valides }}</p>
+                        <p class="text-sm text-gray-600">Non Validés</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 border-l-4 border-l-warning-600 overflow-hidden group hover:shadow-lg transition-shadow duration-200">
+            <div class="p-5">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-14 h-14 bg-warning-100 rounded-xl flex items-center justify-center group-hover:bg-warning-200 transition-colors duration-200">
+                            <svg class="w-7 h-7 text-warning-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-3xl font-bold text-warning-600">{{ pv.nombre_valides_compensation }}</p>
+                        <p class="text-sm text-gray-600">Par Compensation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Table -->
+    <div class="grid grid-cols-1 xl:grid-cols-6 gap-6">
+        <!-- Sidebar Filters -->
+        <div class="xl:col-span-1">
+            <div class="bg-white rounded-xl shadow-md border border-gray-200 sticky top-20">
+                <div class="bg-primary-600 text-white px-4 py-3 rounded-t-xl">
+                    <h3 class="font-semibold flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Filtres</span>
+                    </h3>
+                </div>
+                <div class="p-4 space-y-4">
+                    <form method="get" id="filter-form" class="space-y-4">
+                        <!-- Status Filter -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center space-x-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>Statut Global</span>
+                            </label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer {% if not decision_filter %}bg-gray-100{% endif %}">
+                                    <input type="radio" name="decision" value="" class="text-primary-600 focus:ring-primary-500" {% if not decision_filter %}checked{% endif %}>
+                                    <span class="ml-2 text-sm text-gray-700">Tous</span>
+                                </label>
+                                <label class="flex items-center p-2 rounded-lg hover:bg-success-50 cursor-pointer {% if decision_filter == 'V' %}bg-success-100{% endif %}">
+                                    <input type="radio" name="decision" value="V" class="text-success-600 focus:ring-success-500" {% if decision_filter == 'V' %}checked{% endif %}>
+                                    <span class="ml-2 text-sm text-success-700">Validés</span>
+                                </label>
+                                <label class="flex items-center p-2 rounded-lg hover:bg-danger-50 cursor-pointer {% if decision_filter == 'NV' %}bg-danger-100{% endif %}">
+                                    <input type="radio" name="decision" value="NV" class="text-danger-600 focus:ring-danger-500" {% if decision_filter == 'NV' %}checked{% endif %}>
+                                    <span class="ml-2 text-sm text-danger-700">Non Validés</span>
+                                </label>
+                                <label class="flex items-center p-2 rounded-lg hover:bg-warning-50 cursor-pointer {% if decision_filter == 'VC' %}bg-warning-100{% endif %}">
+                                    <input type="radio" name="decision" value="VC" class="text-warning-600 focus:ring-warning-500" {% if decision_filter == 'VC' %}checked{% endif %}>
+                                    <span class="ml-2 text-sm text-warning-700">Compensation</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-200 pt-4">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">UE</label>
+                            <select class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" name="ue" id="ue-filter">
+                                <option value="">Toutes les UE</option>
+                                {% for ue in ues %}
+                                    <option value="{{ ue.code }}" {% if ue_filter == ue.code %}selected{% endif %}>
+                                        {{ ue.code }} - {{ ue.intitule }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Matière (ECUE)</label>
+                            <select class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" name="ecue" id="ecue-filter">
+                                <option value="">Toutes les matières</option>
+                                {% for ecue in ecues %}
+                                    <option value="{{ ecue.code }}" {% if ecue_filter == ecue.code %}selected{% endif %}>
+                                        {{ ecue.code }} - {{ ecue.intitule }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Statut matière</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer {% if not decision_ecue_filter %}bg-gray-100{% endif %}">
+                                    <input type="radio" name="decision_ecue" value="" class="text-primary-600 focus:ring-primary-500" {% if not decision_ecue_filter %}checked{% endif %}>
+                                    <span class="ml-2 text-sm text-gray-700">Tous</span>
+                                </label>
+                                <label class="flex items-center p-2 rounded-lg hover:bg-success-50 cursor-pointer {% if decision_ecue_filter == 'V' %}bg-success-100{% endif %}">
+                                    <input type="radio" name="decision_ecue" value="V" class="text-success-600 focus:ring-success-500" {% if decision_ecue_filter == 'V' %}checked{% endif %}>
+                                    <span class="ml-2 text-sm text-success-700">Validé (V)</span>
+                                </label>
+                                <label class="flex items-center p-2 rounded-lg hover:bg-danger-50 cursor-pointer {% if decision_ecue_filter == 'NV' %}bg-danger-100{% endif %}">
+                                    <input type="radio" name="decision_ecue" value="NV" class="text-danger-600 focus:ring-danger-500" {% if decision_ecue_filter == 'NV' %}checked{% endif %}>
+                                    <span class="ml-2 text-sm text-danger-700">Non Validé (NV)</span>
+                                </label>
+                                <label class="flex items-center p-2 rounded-lg hover:bg-warning-50 cursor-pointer {% if decision_ecue_filter == 'VC' %}bg-warning-100{% endif %}">
+                                    <input type="radio" name="decision_ecue" value="VC" class="text-warning-600 focus:ring-warning-500" {% if decision_ecue_filter == 'VC' %}checked{% endif %}>
+                                    <span class="ml-2 text-sm text-warning-700">Compensation (VC)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-200 pt-4">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Rechercher</label>
+                            <input type="text" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" name="search" placeholder="Nom ou Matricule..." value="{{ search_query }}">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Moyenne</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="number" class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" name="moy_min" placeholder="Min" min="0" max="20" step="0.01" value="{{ moy_min }}">
+                                <input type="number" class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" name="moy_max" placeholder="Max" min="0" max="20" step="0.01" value="{{ moy_max }}">
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-200 pt-4 space-y-2">
+                            <button type="submit" class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors duration-200">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Filtrer</span>
+                            </button>
+                            <a href="{% url 'pv:dashboard' pv.pk %}" class="w-full flex items-center justify-center space-x-2 px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold rounded-lg transition-colors duration-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                <span>Réinitialiser</span>
+                            </a>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                            <p class="text-xs text-gray-500 uppercase tracking-wide">Résultats</p>
+                            <p class="text-2xl font-bold text-primary-600">{{ total_etudiants }}</p>
+                            <p class="text-xs text-gray-500">étudiant(s)</p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Table -->
+        <div class="xl:col-span-5">
+            <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                <div class="bg-white px-6 py-4 border-b border-gray-200">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
+                        <h3 class="font-semibold text-gray-900 flex items-center space-x-2">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            <span>Notes Détaillées par Matière</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                                {{ ues.count }} UE | {{ ecues.count }} ECUE
+                            </span>
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm text-gray-600">Afficher:</label>
+                            <select class="px-3 py-1 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" name="per_page" id="per-page-select">
+                                <option value="10" {% if per_page == '10' %}selected{% endif %}>10</option>
+                                <option value="20" {% if per_page == '20' %}selected{% endif %}>20</option>
+                                <option value="50" {% if per_page == '50' %}selected{% endif %}>50</option>
+                                <option value="100" {% if per_page == '100' %}selected{% endif %}>100</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-0">
+                    <div class="table-wrapper">
+                        <table class="table table-bordered table-hover mb-0" id="main-table">
+                            <thead>
+                                <!-- Ligne 1: En-têtes UE -->
+                                <tr class="table-secondary">
+                                    <!-- Colonnes fixes -->
+                                    <th rowspan="3" class="text-center align-middle fixed-col col-numero">N°</th>
+                                    <th rowspan="3" class="align-middle fixed-col col-matricule">MATRICULE</th>
+                                    <th rowspan="3" class="align-middle fixed-col col-nom">NOMS & PRÉNOMS</th>
+
+                                    <!-- En-têtes UE dynamiques -->
+                                    {% for ue in ues %}
+                                    <th colspan="{{ ue.ecues.count|multiply:8|add:7 }}" class="text-center bg-info text-white">
+                                        <div class="fw-bold">{{ ue.code }}</div>
+                                        <div class="small fw-normal">{{ ue.intitule }}</div>
+                                    </th>
+                                    {% endfor %}
+
+                                    <!-- Synthèse générale -->
+                                    <th colspan="3" rowspan="1" class="text-center align-middle bg-success text-white">
+                                        <div class="fw-bold">SYNTHÈSE GÉNÉRALE</div>
+                                    </th>
+                                </tr>
+
+                                <!-- Ligne 2: En-têtes ECUE + Synthèse UE -->
+                                <tr class="table-light">
+                                    {% for ue in ues %}
+                                        {% for ecue in ue.ecues.all %}
+                                        <th colspan="8" class="text-center bg-light border">
+                                            <div class="fw-bold text-primary small">{{ ecue.code }}</div>
+                                            <div class="small text-muted text-truncate" style="max-width: 200px;">{{ ecue.intitule }}</div>
+                                            <div class="small text-muted">({{ ecue.credits }} crédits)</div>
+                                        </th>
+                                        {% endfor %}
+                                        <th colspan="7" class="text-center align-middle bg-warning">
+                                            <div class="fw-bold small">SYNTHÈSE UE</div>
+                                            <div class="fw-bold">{{ ue.code }}</div>
+                                        </th>
+                                    {% endfor %}
+
+                                    <th colspan="3" class="text-center align-middle bg-success">
+                                        <div class="fw-bold small">SYNTHÈSE GÉNÉRALE SEMESTRE</div>
+                                    </th>
+                                </tr>
+
+                                <!-- Ligne 3: Détails colonnes -->
+                                <tr class="table-primary">
+                                    {% for ue in ues %}
+                                        {% for ecue in ue.ecues.all %}
+                                        <th class="col-spacer-excel"></th>
+                                        <th class="text-center small col-cc">CC</th>
+                                        <th class="text-center small col-ex">EX</th>
+                                        <th class="text-center small col-moy">MOY</th>
+                                        <th class="col-spacer-excel"></th>
+                                        <th class="text-center small col-ca">CA</th>
+                                        <th class="col-spacer-excel"></th>
+                                        <th class="text-center small col-dec">DEC</th>
+                                        {% endfor %}
+                                        <th class="col-spacer-excel bg-warning bg-opacity-25"></th>
+                                        <th class="text-center small bg-warning bg-opacity-50">MOY</th>
+                                        <th class="col-spacer-excel bg-warning bg-opacity-25"></th>
+                                        <th class="text-center small bg-warning bg-opacity-50">CRED</th>
+                                        <th class="col-spacer-excel bg-warning bg-opacity-25"></th>
+                                        <th class="text-center small bg-warning bg-opacity-50">DEC</th>
+                                        <th class="col-spacer-excel bg-warning bg-opacity-25"></th>
+                                    {% endfor %}
+
+                                    <th class="text-center small bg-success">MOYENNE/20</th>
+                                    <th class="text-center small bg-success">CRÉDITS<br>ACQUIS</th>
+                                    <th class="text-center small bg-success">DÉCISION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student_data in students_with_notes %}
+                                {% with etudiant=student_data.etudiant notes_par_ecue=student_data.notes_par_ecue syntheses_par_ue=student_data.syntheses_par_ue %}
+                                <tr>
+                                    <td class="text-center fw-bold fixed-col col-numero">{{ etudiant.numero }}</td>
+                                    <td class="fixed-col col-matricule"><code class="small">{{ etudiant.matricule }}</code></td>
+                                    <td class="fixed-col col-nom">{{ etudiant.nom_prenom }}</td>
+
+                                    {% for ue in ues %}
+                                        {% for ecue in ue.ecues.all %}
+                                        {% with note=notes_par_ecue|get_item:ecue.code %}
+                                        <td class="col-spacer-excel"></td>
+                                        <td class="text-center small {% if note.cc and note.cc >= 10 %}bg-success bg-opacity-10{% elif note.cc and note.cc < 10 %}bg-danger bg-opacity-10{% endif %}">
+                                            {% if note.cc %}{{ note.cc|floatformat:2 }}{% endif %}
+                                        </td>
+                                        <td class="text-center small {% if note.examen and note.examen >= 10 %}bg-success bg-opacity-10{% elif note.examen and note.examen < 10 %}bg-danger bg-opacity-10{% endif %}">
+                                            {% if note.examen %}{{ note.examen|floatformat:2 }}{% endif %}
+                                        </td>
+                                        <td class="text-center fw-bold small {% if note.moyenne and note.moyenne >= 10 %}text-success{% elif note.moyenne and note.moyenne < 10 %}text-danger{% endif %}">
+                                            {% if note.moyenne %}{{ note.moyenne|floatformat:2 }}{% endif %}
+                                        </td>
+                                        <td class="col-spacer-excel"></td>
+                                        <td class="text-center small">
+                                            {% if note.credit_attribue %}{{ note.credit_attribue }}{% endif %}
+                                        </td>
+                                        <td class="col-spacer-excel"></td>
+                                        <td class="text-center small">
+                                            {% if note.decision %}
+                                            <span class="badge {{ note.decision_badge_class }} py-0 px-1">
+                                                {{ note.decision }}
+                                            </span>
+                                            {% endif %}
+                                        </td>
+                                        {% endwith %}
+                                        {% endfor %}
+
+                                        {% with synthese=syntheses_par_ue|get_item:ue.code %}
+                                        <td class="col-spacer-excel bg-warning bg-opacity-10"></td>
+                                        <td class="text-center fw-bold small bg-warning bg-opacity-25 {% if synthese.moyenne_ue and synthese.moyenne_ue >= 10 %}text-success{% elif synthese.moyenne_ue and synthese.moyenne_ue < 10 %}text-danger{% endif %}">
+                                            {% if synthese.moyenne_ue %}{{ synthese.moyenne_ue|floatformat:2 }}{% endif %}
+                                        </td>
+                                        <td class="col-spacer-excel bg-warning bg-opacity-10"></td>
+                                        <td class="text-center small bg-warning bg-opacity-25">
+                                            {% if synthese.credits_attribues %}{{ synthese.credits_attribues }}{% endif %}
+                                        </td>
+                                        <td class="col-spacer-excel bg-warning bg-opacity-10"></td>
+                                        <td class="text-center small bg-warning bg-opacity-25">
+                                            {% if synthese.decision %}
+                                            <span class="badge {% if synthese.decision == 'V' %}bg-success{% elif synthese.decision == 'NV' %}bg-danger{% else %}bg-warning text-dark{% endif %} py-0 px-1">
+                                                {{ synthese.decision }}
+                                            </span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="col-spacer-excel bg-warning bg-opacity-10"></td>
+                                        {% endwith %}
+                                    {% endfor %}
+
+                                    <td class="text-center fw-bold bg-success bg-opacity-25 {% if etudiant.moyenne_generale >= 10 %}text-success{% else %}text-danger{% endif %}">
+                                        {{ etudiant.moyenne_generale|floatformat:2 }}
+                                    </td>
+                                    <td class="text-center fw-bold bg-success bg-opacity-25">
+                                        {{ etudiant.credits_acquis }}
+                                    </td>
+                                    <td class="text-center bg-success bg-opacity-25">
+                                        <span class="badge {{ etudiant.get_decision_badge_class }} py-1 px-2">
+                                            {{ etudiant.get_decision_generale_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endwith %}
+                                {% empty %}
+                                <tr>
+                                    <td colspan="100" class="text-center py-5 text-muted">
+                                        <i class="bi bi-inbox fs-1"></i>
+                                        <p class="mt-2 mb-0">Aucun étudiant ne correspond aux critères de filtrage</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                <div class="bg-white px-6 py-4 border-t border-gray-200">
+                    <nav>
+                        <ul class="flex justify-center items-center space-x-1">
+                            {% if page_obj.has_previous %}
+                                <li>
+                                    <a class="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg" href="?{% url_replace page=1 %}" title="Première page">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                                        </svg>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg" href="?{% url_replace page=page_obj.previous_page_number %}" title="Page précédente">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                        </svg>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li><span class="px-3 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg">{{ num }}</span></li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li><a class="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg" href="?{% url_replace page=num %}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li>
+                                    <a class="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg" href="?{% url_replace page=page_obj.next_page_number %}" title="Page suivante">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg" href="?{% url_replace page=page_obj.paginator.num_pages %}" title="Dernière page">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                                        </svg>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    <p class="text-center text-gray-600 text-sm mt-3">
+                        Affichage de <strong>{{ page_obj.start_index }}</strong> à <strong>{{ page_obj.end_index }}</strong> sur <strong>{{ page_obj.paginator.count }}</strong> étudiant(s)
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Variables */
+:root {
+    --col-numero-width: 50px;
+    --col-matricule-width: 120px;
+    --col-nom-width: 250px;
+    --col-cc-width: 55px;
+    --col-ex-width: 55px;
+    --col-moy-width: 55px;
+    --col-ca-width: 45px;
+    --col-dec-width: 50px;
+    --col-spacer-excel-width: 8px;
+}
+
+/* Table Wrapper */
+.table-wrapper {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 70vh;
+    position: relative;
+}
+
+/* Table Styling */
+#main-table {
+    width: max-content;
+    min-width: 100%;
+    font-size: 0.85rem;
+}
+
+/* Fixed Columns */
+.fixed-col {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background-color: #ffffff !important;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.15);
+}
+
+thead .fixed-col {
+    background-color: #e9ecef !important;
+    z-index: 10 !important;
+    position: sticky !important;
+}
+
+tbody .fixed-col {
+    background-color: #ffffff !important;
+}
+
+.table-secondary .fixed-col,
+.table-light .fixed-col,
+.table-primary .fixed-col {
+    background-color: #e9ecef !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd) .fixed-col,
+.table-striped tbody tr:nth-of-type(even) .fixed-col {
+    background-color: #ffffff !important;
+}
+
+.col-numero {
+    left: 0 !important;
+    width: var(--col-numero-width);
+    min-width: var(--col-numero-width);
+}
+
+.col-matricule {
+    left: var(--col-numero-width) !important;
+    width: var(--col-matricule-width);
+    min-width: var(--col-matricule-width);
+}
+
+.col-nom {
+    left: calc(var(--col-numero-width) + var(--col-matricule-width)) !important;
+    width: var(--col-nom-width);
+    min-width: var(--col-nom-width);
+    border-right: 2px solid #dee2e6 !important;
+}
+
+/* Column Widths */
+.col-cc, .col-ex {
+    width: var(--col-cc-width);
+    min-width: var(--col-cc-width);
+    max-width: var(--col-cc-width);
+}
+
+.col-moy {
+    width: var(--col-moy-width);
+    min-width: var(--col-moy-width);
+    max-width: var(--col-moy-width);
+}
+
+.col-ca {
+    width: var(--col-ca-width);
+    min-width: var(--col-ca-width);
+    max-width: var(--col-ca-width);
+}
+
+.col-dec {
+    width: var(--col-dec-width);
+    min-width: var(--col-dec-width);
+    max-width: var(--col-dec-width);
+}
+
+.col-spacer-excel {
+    width: var(--col-spacer-excel-width);
+    min-width: var(--col-spacer-excel-width);
+    max-width: var(--col-spacer-excel-width);
+    background-color: #f8f9fa;
+    padding: 0 !important;
+    border-left: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e6 !important;
+}
+
+/* Sticky Header */
+#main-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+#main-table thead tr {
+    background-color: white;
+}
+
+#main-table thead th {
+    background-color: white;
+    position: relative;
+    z-index: 1;
+}
+
+#main-table thead th.bg-info,
+#main-table thead th.bg-warning,
+#main-table thead th.bg-success {
+    background-color: inherit !important;
+}
+
+#main-table thead th.fixed-col {
+    z-index: 15;
+    background-color: white;
+}
+
+#main-table tbody td.fixed-col {
+    z-index: 5;
+}
+
+/* Table Borders */
+#main-table th,
+#main-table td {
+    border: 1px solid #dee2e6;
+    padding: 8px 4px;
+    white-space: nowrap;
+}
+
+/* Row Hover */
+#main-table tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+#main-table tbody tr:hover .fixed-col {
+    background-color: rgba(13, 110, 253, 0.08);
+}
+
+/* Zebra Striping */
+#main-table tbody tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+#main-table tbody tr:nth-child(even) .fixed-col {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Badge Sizes */
+.badge.py-0 {
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* Scrollbar */
+.table-wrapper::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Responsive */
+@media (max-width: 1400px) {
+    .col-nom {
+        width: 200px;
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 992px) {
+    #main-table {
+        font-size: 0.75rem;
+    }
+}
+
+/* Print */
+@media print {
+    .table-wrapper {
+        overflow: visible !important;
+        max-height: none !important;
+    }
+
+    #main-table {
+        font-size: 8pt;
+    }
+
+    .fixed-col {
+        position: static !important;
+        box-shadow: none !important;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#per-page-select').on('change', function() {
+        const url = new URL(window.location);
+        url.searchParams.set('per_page', $(this).val());
+        url.searchParams.set('page', '1');
+        window.location = url;
+    });
+
+    $('input[name="decision"], select[name="ue"], select[name="ecue"], input[name="decision_ecue"]').on('change', function() {
+        $('#filter-form').submit();
+    });
+
+    const ecueFilter = '{{ ecue_filter }}';
+    if (ecueFilter) {
+        console.log('ECUE Filter active:', ecueFilter);
+    }
+
+    $('#filter-form').on('submit', function() {
+        const btn = $(this).find('button[type="submit"]');
+        btn.html('<span class="spinner-border spinner-border-sm me-1"></span> Filtrage...');
+        btn.prop('disabled', true);
+    });
+
+    if (window.location.search) {
+        $('html, body').animate({
+            scrollTop: $('#main-table').offset().top - 100
+        }, 500);
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,441 @@
+{% extends 'pv/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard AG-Grid - {{ pv.filiere }} {{ pv.niveau }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/styles/ag-grid.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/styles/ag-theme-alpine.css">
+<style>
+    .ag-theme-alpine {
+        --ag-header-background-color: #0d6efd;
+        --ag-header-foreground-color: white;
+        --ag-odd-row-background-color: #f8f9fa;
+    }
+
+    .cell-note-success {
+        background-color: rgba(40, 167, 69, 0.1) !important;
+    }
+
+    .cell-note-danger {
+        background-color: rgba(220, 53, 69, 0.1) !important;
+    }
+
+    .cell-spacer {
+        background-color: #f8f9fa !important;
+        border-left: 1px solid #dee2e6 !important;
+        border-right: 1px solid #dee2e6 !important;
+    }
+
+    #myGrid {
+        height: 600px;
+        width: 100%;
+    }
+
+    .filter-buttons .btn-check:checked + label {
+        font-weight: bold;
+    }
+
+    .pv-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- En-tête du PV -->
+    <div class="pv-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="mb-2">
+                    <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+                    {{ pv.filiere }} - {{ pv.niveau }} - {{ pv.semestre }}
+                </h2>
+                <p class="mb-0">
+                    <i class="bi bi-calendar-event me-2"></i>Année académique {{ pv.annee_academique }}
+                    <span class="ms-3">
+                        <i class="bi bi-person-check me-2"></i>
+                        <span id="student-count">{{ etudiants_count }}</span> étudiant(s)
+                    </span>
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="{% url 'pv:dashboard' pv.id %}?{{ request.GET.urlencode }}" class="btn btn-secondary btn-lg me-2" title="Retour à la vue classique">
+                    <i class="bi bi-arrow-left me-2"></i>Vue Classique
+                </a>
+                <button id="export-excel" class="btn btn-success btn-lg">
+                    <i class="bi bi-file-earmark-excel me-2"></i>Exporter Excel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">
+                <i class="bi bi-funnel me-2"></i>Filtres
+            </h5>
+        </div>
+        <div class="card-body">
+            <form id="filter-form" method="get">
+                <div class="row g-3">
+                    <!-- Statut général -->
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold">Statut général</label>
+                        <div class="btn-group filter-buttons" role="group">
+                            <input type="radio" class="btn-check" name="decision" id="decision-tous" value="" {% if not decision_filter %}checked{% endif %}>
+                            <label class="btn btn-outline-secondary btn-sm" for="decision-tous">
+                                <i class="bi bi-list-ul me-1"></i> Tous
+                            </label>
+
+                            <input type="radio" class="btn-check" name="decision" id="decision-v" value="V" {% if decision_filter == 'V' %}checked{% endif %}>
+                            <label class="btn btn-outline-success btn-sm" for="decision-v">
+                                <i class="bi bi-check-circle me-1"></i> Validé (V)
+                            </label>
+
+                            <input type="radio" class="btn-check" name="decision" id="decision-nv" value="NV" {% if decision_filter == 'NV' %}checked{% endif %}>
+                            <label class="btn btn-outline-danger btn-sm" for="decision-nv">
+                                <i class="bi bi-x-circle me-1"></i> Non Validé (NV)
+                            </label>
+
+                            <input type="radio" class="btn-check" name="decision" id="decision-vc" value="VC" {% if decision_filter == 'VC' %}checked{% endif %}>
+                            <label class="btn btn-outline-warning btn-sm" for="decision-vc">
+                                <i class="bi bi-exclamation-triangle me-1"></i> Compensation (VC)
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- UE et ECUE -->
+                    <div class="col-md-3">
+                        <label for="ue" class="form-label fw-bold">Unité d'Enseignement</label>
+                        <select name="ue" id="ue" class="form-select">
+                            <option value="">Toutes les UE</option>
+                            {% for ue in ues %}
+                                <option value="{{ ue.code }}" {% if ue_filter == ue.code %}selected{% endif %}>
+                                    {{ ue.code }} - {{ ue.intitule }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="ecue" class="form-label fw-bold">Matière (ECUE)</label>
+                        <select name="ecue" id="ecue" class="form-select">
+                            <option value="">Toutes les matières</option>
+                            {% for ue in ues %}
+                                {% for ecue in ue.ecues.all %}
+                                    <option value="{{ ecue.code }}" {% if ecue_filter == ecue.code %}selected{% endif %}>
+                                        {{ ecue.code }} - {{ ecue.intitule }}
+                                    </option>
+                                {% endfor %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Statut matière -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Statut matière</label>
+                        <div class="btn-group filter-buttons" role="group">
+                            <input type="radio" class="btn-check" name="decision_ecue" id="ecue-tous" value="" {% if not decision_ecue_filter %}checked{% endif %}>
+                            <label class="btn btn-outline-secondary btn-sm" for="ecue-tous">
+                                <i class="bi bi-list-ul me-1"></i> Tous
+                            </label>
+
+                            <input type="radio" class="btn-check" name="decision_ecue" id="ecue-v" value="V" {% if decision_ecue_filter == 'V' %}checked{% endif %}>
+                            <label class="btn btn-outline-success btn-sm" for="ecue-v">
+                                <i class="bi bi-check-circle me-1"></i> Validé (V)
+                            </label>
+
+                            <input type="radio" class="btn-check" name="decision_ecue" id="ecue-nv" value="NV" {% if decision_ecue_filter == 'NV' %}checked{% endif %}>
+                            <label class="btn btn-outline-danger btn-sm" for="ecue-nv">
+                                <i class="bi bi-x-circle me-1"></i> Non Validé (NV)
+                            </label>
+
+                            <input type="radio" class="btn-check" name="decision_ecue" id="ecue-vc" value="VC" {% if decision_ecue_filter == 'VC' %}checked{% endif %}>
+                            <label class="btn btn-outline-warning btn-sm" for="ecue-vc">
+                                <i class="bi bi-exclamation-triangle me-1"></i> Compensation (VC)
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Recherche et moyenne -->
+                    <div class="col-md-4">
+                        <label for="search" class="form-label fw-bold">Recherche</label>
+                        <input type="text" name="search" id="search" class="form-control"
+                               placeholder="Nom, prénom ou matricule..."
+                               value="{{ search_query }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="moy_min" class="form-label fw-bold">Moyenne min</label>
+                        <input type="number" name="moy_min" id="moy_min" class="form-control"
+                               step="0.01" min="0" max="20"
+                               placeholder="Ex: 10.00"
+                               value="{{ moy_min }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="moy_max" class="form-label fw-bold">Moyenne max</label>
+                        <input type="number" name="moy_max" id="moy_max" class="form-control"
+                               step="0.01" min="0" max="20"
+                               placeholder="Ex: 15.00"
+                               value="{{ moy_max }}">
+                    </div>
+
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search me-2"></i>Filtrer
+                        </button>
+                        <a href="{% url 'pv:dashboard_aggrid' pv.id %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Réinitialiser
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tableau AG-Grid -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div id="myGrid" class="ag-theme-alpine"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/dist/ag-grid-community.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Données des étudiants depuis Django
+    const studentsData = {{ students_json|safe }};
+
+    // Configuration des colonnes AG-Grid
+    const columnDefs = [
+        // Colonnes fixes
+        {
+            headerName: 'N°',
+            field: 'numero',
+            width: 60,
+            pinned: 'left',
+            cellClass: 'text-center fw-bold'
+        },
+        {
+            headerName: 'MATRICULE',
+            field: 'matricule',
+            width: 120,
+            pinned: 'left',
+            cellClass: 'fw-bold'
+        },
+        {
+            headerName: 'NOMS & PRÉNOMS',
+            field: 'nom_prenom',
+            width: 250,
+            pinned: 'left',
+            cellClass: 'fw-bold'
+        }
+    ];
+
+    // Ajouter les colonnes pour chaque UE et ECUE
+    {% for ue in ues %}
+        const ue{{ forloop.counter }}Children = [];
+
+        {% for ecue in ue.ecues.all %}
+            // Groupe ECUE
+            const ecue{{ forloop.parentloop.counter }}_{{ forloop.counter }}Children = [
+                { headerName: '', field: 'ecue_{{ ecue.code }}_spacer1', width: 8, cellClass: 'cell-spacer', suppressMenu: true },
+                {
+                    headerName: 'CC',
+                    field: 'ecue_{{ ecue.code }}_cc',
+                    width: 60,
+                    type: 'numericColumn',
+                    valueFormatter: params => params.value != null ? params.value.toFixed(2) : '',
+                    cellClass: params => {
+                        if (params.value == null) return '';
+                        return params.value >= 10 ? 'cell-note-success text-center' : 'cell-note-danger text-center';
+                    }
+                },
+                {
+                    headerName: 'EX',
+                    field: 'ecue_{{ ecue.code }}_ex',
+                    width: 60,
+                    type: 'numericColumn',
+                    valueFormatter: params => params.value != null ? params.value.toFixed(2) : '',
+                    cellClass: params => {
+                        if (params.value == null) return '';
+                        return params.value >= 10 ? 'cell-note-success text-center' : 'cell-note-danger text-center';
+                    }
+                },
+                {
+                    headerName: 'MOY',
+                    field: 'ecue_{{ ecue.code }}_moy',
+                    width: 60,
+                    type: 'numericColumn',
+                    valueFormatter: params => params.value != null ? params.value.toFixed(2) : '',
+                    cellClass: params => {
+                        if (params.value == null) return '';
+                        return params.value >= 10 ? 'cell-note-success text-center fw-bold' : 'cell-note-danger text-center fw-bold';
+                    }
+                },
+                { headerName: '', field: 'ecue_{{ ecue.code }}_spacer2', width: 8, cellClass: 'cell-spacer', suppressMenu: true },
+                {
+                    headerName: 'CA',
+                    field: 'ecue_{{ ecue.code }}_ca',
+                    width: 50,
+                    type: 'numericColumn',
+                    cellClass: 'text-center'
+                },
+                { headerName: '', field: 'ecue_{{ ecue.code }}_spacer3', width: 8, cellClass: 'cell-spacer', suppressMenu: true },
+                {
+                    headerName: 'DEC',
+                    field: 'ecue_{{ ecue.code }}_dec',
+                    width: 60,
+                    cellClass: params => {
+                        const value = params.value;
+                        if (!value) return 'text-center';
+                        if (value === 'V') return 'text-center text-success fw-bold';
+                        if (value === 'NV') return 'text-center text-danger fw-bold';
+                        if (value === 'VC') return 'text-center text-warning fw-bold';
+                        return 'text-center';
+                    }
+                }
+            ];
+
+            ue{{ forloop.parentloop.counter }}Children.push({
+                headerName: '{{ ecue.code }} - {{ ecue.intitule }}',
+                headerClass: 'bg-warning bg-opacity-25',
+                children: ecue{{ forloop.parentloop.counter }}_{{ forloop.counter }}Children
+            });
+        {% endfor %}
+
+        // Synthèse UE
+        const uesyntheseChildren = [
+            { headerName: '', field: 'ue_{{ ue.code }}_spacer1', width: 8, cellClass: 'cell-spacer', suppressMenu: true },
+            {
+                headerName: 'MOY',
+                field: 'ue_{{ ue.code }}_moy',
+                width: 60,
+                type: 'numericColumn',
+                valueFormatter: params => params.value != null ? params.value.toFixed(2) : '',
+                cellClass: params => {
+                    if (params.value == null) return '';
+                    return params.value >= 10 ? 'cell-note-success text-center fw-bold' : 'cell-note-danger text-center fw-bold';
+                }
+            },
+            { headerName: '', field: 'ue_{{ ue.code }}_spacer2', width: 8, cellClass: 'cell-spacer', suppressMenu: true },
+            {
+                headerName: 'CRED',
+                field: 'ue_{{ ue.code }}_cred',
+                width: 60,
+                type: 'numericColumn',
+                cellClass: 'text-center fw-bold'
+            },
+            { headerName: '', field: 'ue_{{ ue.code }}_spacer3', width: 8, cellClass: 'cell-spacer', suppressMenu: true },
+            {
+                headerName: 'DEC',
+                field: 'ue_{{ ue.code }}_dec',
+                width: 60,
+                cellClass: params => {
+                    const value = params.value;
+                    if (!value) return 'text-center';
+                    if (value === 'V') return 'text-center text-success fw-bold';
+                    if (value === 'NV') return 'text-center text-danger fw-bold';
+                    if (value === 'VC') return 'text-center text-warning fw-bold';
+                    return 'text-center';
+                }
+            },
+            { headerName: '', field: 'ue_{{ ue.code }}_spacer4', width: 8, cellClass: 'cell-spacer', suppressMenu: true }
+        ];
+
+        ue{{ forloop.counter }}Children.push({
+            headerName: 'SYNTHÈSE UE',
+            headerClass: 'bg-success bg-opacity-25',
+            children: uesyntheseChildren
+        });
+
+        // Ajouter le groupe UE complet
+        columnDefs.push({
+            headerName: '{{ ue.code }} - {{ ue.intitule }}',
+            headerClass: 'bg-info bg-opacity-25',
+            children: ue{{ forloop.counter }}Children
+        });
+    {% endfor %}
+
+    // Synthèse générale
+    columnDefs.push({
+        headerName: 'SYNTHÈSE GÉNÉRALE',
+        headerClass: 'bg-primary bg-opacity-25',
+        children: [
+            {
+                headerName: 'MOY',
+                field: 'moyenne_generale',
+                width: 70,
+                type: 'numericColumn',
+                valueFormatter: params => params.value != null ? params.value.toFixed(2) : '',
+                cellClass: params => {
+                    if (params.value == null) return '';
+                    return params.value >= 10 ? 'cell-note-success text-center fw-bold' : 'cell-note-danger text-center fw-bold';
+                }
+            },
+            {
+                headerName: 'CRED',
+                field: 'credits_acquis',
+                width: 70,
+                type: 'numericColumn',
+                cellClass: 'text-center fw-bold'
+            },
+            {
+                headerName: 'DEC',
+                field: 'decision_generale',
+                width: 80,
+                cellClass: params => {
+                    const value = params.value;
+                    if (!value) return 'text-center';
+                    if (value === 'Validé' || value === 'V') return 'text-center text-success fw-bold';
+                    if (value === 'Non Validé' || value === 'NV') return 'text-center text-danger fw-bold';
+                    if (value === 'Validé par compensation' || value === 'VC') return 'text-center text-warning fw-bold';
+                    return 'text-center';
+                }
+            }
+        ]
+    });
+
+    // Options AG-Grid
+    const gridOptions = {
+        columnDefs: columnDefs,
+        rowData: studentsData,
+        defaultColDef: {
+            sortable: true,
+            filter: true,
+            resizable: true
+        },
+        domLayout: 'normal',
+        enableCellTextSelection: true,
+        ensureDomOrder: true,
+        suppressHorizontalScroll: false,
+        onGridReady: function(params) {
+            params.api.sizeColumnsToFit();
+        }
+    };
+
+    // Initialiser AG-Grid
+    const gridDiv = document.querySelector('#myGrid');
+    const gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
+    // Export Excel
+    document.getElementById('export-excel').addEventListener('click', function() {
+        gridApi.exportDataAsExcel({
+            fileName: 'PV_{{ pv.filiere }}_{{ pv.niveau }}_{{ pv.semestre }}_Export.xlsx',
+            sheetName: '{{ pv.semestre }}',
+            columnKeys: columnDefs.map(col => col.field || col.children?.map(c => c.field)).flat().filter(Boolean)
+        });
+    });
+});
+</script>
+{% endblock %}
